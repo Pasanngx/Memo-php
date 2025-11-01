@@ -39,12 +39,12 @@ if ($statement = $database_handler->prepare('SELECT id, name, password FROM user
         exit;
     }
 
-    $_SESSION['user'] = [
+      $_SESSION['user'] = [
         'name' => $user['name'],
         'id' => $user['id']
     ];
- // --------- ここから追加する -----------
-    // 更新日が最新のメモ情報を保持
+    //ここから追加部分
+    //更新日が最新のメモ情報を保持
     if ($statement = $database_handler->prepare(
         "SELECT id, title, content
            FROM memos
@@ -52,23 +52,20 @@ if ($statement = $database_handler->prepare('SELECT id, name, password FROM user
           ORDER BY updated_at DESC
           LIMIT 1"
     )) {
-        $statement->bindParam(":user_id", $id);
+        $statement->bindParam(":user_id", $user['id']);
         $statement->execute();
         $result = $statement->fetch(PDO::FETCH_ASSOC);
-
-        if ($result) {
+        if($result) {
             $_SESSION['select_memo'] = [
-                'id'      => $result['id'],
-                'title'   => $result['title'],
+                'id'     => $result['id'],
+                'title'  => $result['title'],
                 'content' => $result['content']
             ];
         }
     }
-    // --------- ここまで追加する -----------
-
+    //
     header('Location: ../../memo/');
     exit;
 } else {
-    //以降は既存のエラーハンドリング
+    //　以降は既存のエラーハンドリング
 }
-
